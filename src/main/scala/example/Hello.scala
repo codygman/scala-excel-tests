@@ -1,11 +1,41 @@
 package example
 
 import info.folone.scala.poi._
+import scala.collection.immutable.ListSet
+import java.io.{BufferedOutputStream,FileOutputStream}
 
-object Hello {
-  def addSheetToWorkbook(workbook : Workbook, newSheet : Sheet) : Workbook = {
-    workbook
+object Hello extends App {
+
+  def writeWorkbook() = {
+    val workbook = Workbook { ListSet(
+                               List(
+                                 Sheet("name1") { Set(Row(0) { Set(StringCell(0, "data")) }) },
+                                 Sheet("name2") { Set(Row(0) { Set(StringCell(0, "data")) }) },
+                                 Sheet("name3") { Set(Row(0) { Set(StringCell(0, "data")) }) },
+                                 Sheet("name4") { Set(Row(0) { Set(StringCell(0, "data")) }) },
+                                 Sheet("name5") { Set(Row(0) { Set(StringCell(0, "data")) }) }
+                               ) : _*
+                             )
+    }.asPoi
+    val sheetOrder = List("name1","name2","name3","name4","name5")
+    for (sheetName <- sheetOrder; i <- 0 to sheetOrder.length-1){
+      workbook.setSheetOrder(sheetName, i)
+    }
+    val file = "/tmp/test.xls"
+    val target = new BufferedOutputStream( new FileOutputStream(file) );
+    workbook.write(target)
+    target.flush
+    workbook.close
+
+    println("done")
+
   }
+  writeWorkbook()
+
+  println("hi")
+  // def addSheetToWorkbook(workbook : Workbook, newSheet : Sheet) : Workbook = {
+  //   workbook
+  // }
 }
 
 
